@@ -16,20 +16,49 @@ import (
 )
 
 func main() {
-	remoteAPIURL := "https://jasco-help.com/sds/" // URL to fetch HTML content from
-	localFilePath := "jasco-help.html"                                       // Path where HTML file will be stored
-	var getData string                                                    // Variable to hold HTML content
+	remoteAPIURL := []string{
+		"https://jasco-help.com/removers/premium-paint-epoxy-remover-non-methylene-chloride/",
+		"https://jasco-help.com/removers/premium-paint-epoxy-remover-non-methylene-chloride-aerosol/",
+		"https://jasco-help.com/removers/premium-paint-epoxy-remover-non-methylene-chloride-aerosol-california/",
+		"https://jasco-help.com/removers/premium-paint-epoxy-remover-non-methylene-chloride-california/",
+		"https://jasco-help.com/removers/mask-peel-aerosol/",
+		"https://jasco-help.com/cleaning-and-paint-prep/liquid-mask-seal/",
+		"https://jasco-help.com/discontinued/acetone/",
+		"https://jasco-help.com/discontinued/boiled-linseed-oil/",
+		"https://jasco-help.com/discontinued/lacquer-thinner-for-california/",
+		"https://jasco-help.com/discontinued/m-e-k-substitute/",
+		"https://jasco-help.com/discontinued/odorless-mineral-spirits/",
+		"https://jasco-help.com/discontinued/painter-thinner/",
+		"https://jasco-help.com/discontinued/paint-thinner-for-california/",
+		"https://jasco-help.com/discontinued/paint-thinner-for-south-coast/",
+		"https://jasco-help.com/discontinued/turpentine/",
+		"https://jasco-help.com/discontinued/xylene/",
+		"https://jasco-help.com/discontinued/brush-cleaner/",
+		"https://jasco-help.com/discontinued/brush-cleaner-for-california/",
+		"https://jasco-help.com/discontinued/tsp-substitute/",
+		"https://jasco-help.com/discontinued/jasco-green-denatured-alcohol/",
+		"https://jasco-help.com/discontinued/jasco-green-lacquer-thinner/",
+		"https://jasco-help.com/discontinued/jasco-green-odorless-mineral-spirits/",
+		"https://jasco-help.com/discontinued/jasco-green-paint-thinner/",
+		"https://jasco-help.com/discontinued/jasco-lacquer-thinner/",
+		"https://jasco-help.com/discontinued/jasco-green-brush-cleaner/",
+		"https://jasco-help.com/discontinued/painters-solvent/",
+		"https://jasco-help.com/discontinued/vmp-naphtha/",
+		"https://jasco-help.com/discontinued/denatured-alcohol/",
+		"https://jasco-help.com/discontinued/odorless-mineral-spirit/",
+		"https://jasco-help.com/discontinued/discontinued-jasco-muriatic-acid-gallon/",
+		"https://jasco-help.com/discontinued/jasco-green-muriatic-acid-gallon/",
+	} // URL to fetch HTML content from
+	localFilePath := "jasco-help.html" // Path where HTML file will be stored
 
-	if !fileExists(localFilePath) { // Check if local HTML file already exists
-		getData = getDataFromURL(remoteAPIURL)       // If not, download HTML content from URL
-		appendAndWriteToFile(localFilePath, getData) // Save downloaded content to file
+	var getData []string
+
+	for _, urls := range remoteAPIURL {
+		getData = append(getData, getDataFromURL(urls)) // If not, download HTML content from URL
 	}
+	appendAndWriteToFile(localFilePath, strings.Join(getData, "")) // Save downloaded content to file
 
-	if fileExists(localFilePath) { // If the file exists now
-		getData = readAFileAsString(localFilePath) // Read its contents into getData
-	}
-
-	finalList := extractPDFUrls(getData) // Extract all PDF links from HTML content
+	finalList := extractPDFUrls(strings.Join(getData, "")) // Extract all PDF links from HTML content
 
 	outputDir := "PDFs/" // Directory to store downloaded PDFs
 
@@ -148,9 +177,9 @@ func downloadPDF(finalURL, outputDir string) bool {
 		return false
 	}
 
-	contentType := resp.Header.Get("Content-Type")         // Get content type of response
-	if !strings.Contains(contentType, "application/pdf") { // Check if it's a PDF
-		log.Printf("Invalid content type for %s: %s (expected application/pdf)", finalURL, contentType)
+	contentType := resp.Header.Get("Content-Type")             // Get content type of response
+	if !strings.Contains(contentType, "binary/octet-stream") { // Check if it's a PDF
+		log.Printf("Invalid content type for %s: %s (expected binary/octet-stream)", finalURL, contentType)
 		return false
 	}
 
