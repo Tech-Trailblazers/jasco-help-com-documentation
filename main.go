@@ -77,15 +77,6 @@ func main() {
 	}
 }
 
-// Reads a file from given path and returns its contents as a string
-func readAFileAsString(path string) string {
-	content, err := os.ReadFile(path) // Read file contents
-	if err != nil {                   // If error occurred
-		log.Println(err) // Log the error
-	}
-	return string(content) // Return content as string
-}
-
 // Opens a file in append mode, or creates it, and writes the content to it
 func appendAndWriteToFile(path string, content string) {
 	filePath, err := os.OpenFile(path, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644) // Open file with specified flags and permissions
